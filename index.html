@@ -133,12 +133,28 @@
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: var(--space-2);
+            gap: var(--space-3);
         }
 
-        .header h1::before {
-            content: "⚡";
-            font-size: 1.25rem;
+        .logo-wrapper {
+            position: relative;
+            display: inline-flex;
+            font-size: 1.5rem;
+        }
+
+        .logo-mzo {
+            position: absolute;
+            top: -4px;
+            right: -10px;
+            background: var(--primary-600);
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 1px 4px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            line-height: 1;
+            box-shadow: var(--shadow-sm);
         }
 
         /* Style for the new Reset button in the header */
@@ -1048,11 +1064,20 @@
             }
             .header-content > div {
                 justify-content: center;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 width: 100%;
+                gap: var(--space-1) !important;
+            }
+            .header .btn-reset {
+                padding: 0.4rem var(--space-2);
+                font-size: 0.7rem;
+                flex: 1;
+                justify-content: center;
+                min-width: 0;
+                white-space: nowrap;
             }
             .container {
-                padding-top: 140px; 
+                padding-top: 170px; 
             }
             .score-cards-grid {
                 grid-template-columns: 1fr;
@@ -1088,13 +1113,18 @@
         <!-- Modern Header -->
         <header class="header">
             <div class="header-content">
-                <h1>Substation Upkeeping Score Sheet</h1>
+                <h1>
+                    <span class="logo-wrapper">
+                        ⚡<span class="logo-mzo">MZO</span>
+                    </span>
+                    Substation Upkeeping
+                </h1>
                 <div style="display: flex; gap: var(--space-2);">
                     <!-- New Trends Button -->
                     <a href="analytics.html" class="btn btn-reset"
-                        style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem; background: var(--primary-500); color: white; border-color: var(--primary-600);">
+                        style="text-decoration: none; display: flex; align-items: center; gap: 0.3rem; background: var(--primary-500); color: white; border-color: var(--primary-600);">
                         <i class="fas fa-chart-line"></i>
-                        Trends
+                        Trend
                     </a>
                     <!-- New Reset Button -->
                     <button id="resetBtn" class="btn btn-reset">
@@ -1104,9 +1134,9 @@
                     <!-- View Reports Button -->
                     <div style="position: relative; display: inline-flex;">
                         <a href="view_report.html" class="btn btn-reset"
-                            style="text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
+                            style="text-decoration: none; display: flex; align-items: center; gap: 0.3rem;">
                             <i class="fas fa-list"></i>
-                            Reports
+                            Report
                         </a>
                         <span id="pendingBadge" title="Pending sync" style="display:none; position:absolute; top:-7px; right:-7px; background:var(--red-500); color:white; border-radius:50%; min-width:18px; height:18px; font:700 10px/18px 'Inter',sans-serif; text-align:center; padding:0 3px; z-index:10;">0</span>
                     </div>
