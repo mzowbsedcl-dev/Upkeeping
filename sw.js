@@ -4,6 +4,7 @@ const ASSETS = [
     'index.html',
     'analytics.html',
     'report.html',
+    'report1.html',
     'view_report.html',
     'manifest.json',
     'icon-192.png',
