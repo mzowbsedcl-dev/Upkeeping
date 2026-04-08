@@ -1910,6 +1910,7 @@
                         });
 
                         // Add-photo slot (max 2)
+                        if (currentPhotos.length < 2) {
                             // --- GALLERY BUTTON ---
                             const gallerySlot = document.createElement('div');
                             gallerySlot.className = 'photo-slot add-slot';
