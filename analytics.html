@@ -101,6 +101,50 @@
             box-shadow: var(--shadow-md);
         }
 
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid var(--neutral-100);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .kpi-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-600);
+            line-height: 1;
+        }
+
+        .kpi-sublabel {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .full-width {
             grid-column: 1 / -1;
         }
@@ -199,6 +243,132 @@
                 flex: 1;
             }
         }
+
+        /* Tabs Styling */
+        .tabs-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--neutral-200);
+            padding-bottom: 0.1rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.75rem 0.25rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-600);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-600);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.1rem;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-600);
+            border-radius: 2px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Subtabs Styling */
+        .subtabs-header {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .subtab-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .subtab-btn:hover {
+            color: var(--primary-600);
+        }
+
+        .subtab-btn.active {
+            color: var(--primary-600);
+            border-bottom-color: var(--primary-600);
+        }
+
+        /* Trend Tables */
+        .trend-table-container {
+            overflow-x: auto;
+            border-radius: 0.5rem;
+            border: 1px solid var(--neutral-100);
+        }
+
+        .trend-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .trend-table th {
+            text-align: left;
+            padding: 1rem;
+            background: var(--neutral-50);
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--neutral-200);
+        }
+
+        .trend-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--neutral-100);
+            color: var(--text-primary);
+        }
+
+        .trend-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .trend-table tr:hover {
+            background: var(--neutral-50);
+        }
+
+        .score-pill {
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .score-high { background: #d1fae5; color: #065f46; }
+        .score-mid { background: #fef3c7; color: #92400e; }
+        .score-low { background: #fee2e2; color: #991b1b; }
+
     </style>
 </head>
 
@@ -215,10 +385,7 @@
             </div>
             <h1>Substation Trends</h1>
             <div class="controls">
-                <a href="item_analytics.html"
-                    class="px-4 py-2 bg-sky-100 text-sky-700 rounded-lg text-sm font-bold hover:bg-sky-200 transition-colors flex items-center gap-2">
-                    <i class="fas fa-list-ul"></i> Item Stats
-                </a>
+
                 <select id="divisionSelect">
                     <option value="">All Divisions</option>
                 </select>
@@ -228,41 +395,77 @@
             </div>
         </header>
 
-        <div class="dashboard-grid">
-            <!-- Key Stats -->
-            <div class="card">
-                <div class="card-title"><i class="fas fa-star"></i> Avg. Total Score</div>
-                <div id="avgScore" class="stat-value">-</div>
-                <div id="scoreTrend" class="trend-indicator"></div>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-clipboard-check"></i> Inspections</div>
+                <div id="totalInspections" class="kpi-value">-</div>
+                <div class="kpi-sublabel">Total audits</div>
             </div>
-            <div class="card">
-                <div class="card-title"><i class="fas fa-clipboard-check"></i> Total Inspections</div>
-                <div id="totalInspections" class="stat-value">-</div>
-                <div class="stat-label">to date</div>
+            <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-charging-station"></i> SS Inspected</div>
+                <div id="uniqueSS" class="kpi-value">-</div>
+                <div class="kpi-sublabel">Unique substations</div>
             </div>
-            <div class="card">
-                <div class="card-title"><i class="fas fa-trophy text-yellow-500"></i> Highest Score</div>
-                <div id="highestScore" class="stat-value">-</div>
-                <div id="highestScoreLabel" class="stat-label">-</div>
+            <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-star"></i> Avg Score</div>
+                <div id="avgScore" class="kpi-value">-</div>
+                <div id="scoreTrend" class="trend-indicator" style="font-size: 0.7rem; margin-top: 0;"></div>
             </div>
-            <div class="card">
-                <div class="card-title"><i class="fas fa-arrow-down text-red-500"></i> Lowest Score</div>
-                <div id="lowestScore" class="stat-value">-</div>
-                <div id="lowestScoreLabel" class="stat-label">-</div>
+            <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-trophy text-yellow-500"></i> Highest</div>
+                <div id="highestScore" class="kpi-value">-</div>
+                <div id="highestScoreLabel" class="kpi-sublabel">-</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-arrow-down text-red-500"></i> Lowest</div>
+                <div id="lowestScore" class="kpi-value">-</div>
+                <div id="lowestScoreLabel" class="kpi-sublabel">-</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title"><i class="fas fa-exclamation-triangle text-amber-500"></i> Below Avg</div>
+                <div id="belowAvgSS" class="kpi-value">-</div>
+                <div class="kpi-sublabel">SS with < avg score</div>
+            </div>
+        </div>
+
+        <!-- Main Chart Section with Tabs -->
+        <div class="card full-width">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('trendTab')">
+                    <i class="fas fa-chart-line"></i> Score Trend
+                </button>
+                <button class="tab-btn" onclick="switchTab('barTab')">
+                    <i class="fas fa-chart-bar"></i> Category Averages
+                </button>
             </div>
 
-            <!-- Main Chart -->
-            <div class="card full-width">
-                <div class="card-title"><i class="fas fa-chart-line"></i> Total Score Trend Over Time</div>
-                <div class="chart-container">
-                    <canvas id="trendChart"></canvas>
+            <div id="trendTab" class="tab-content active">
+                <div class="subtabs-header">
+                    <button class="subtab-btn active" onclick="switchSubTab(event, 'divisionTrendContainer')">
+                        <i class="fas fa-building"></i> Division Trend
+                    </button>
+                    <button class="subtab-btn" onclick="switchSubTab(event, 'ssTrendContainer')">
+                        <i class="fas fa-charging-station"></i> SS Trend
+                    </button>
+                </div>
+
+                <div id="divisionTrendContainer" class="subtab-pane active">
+                    <div class="card-title" style="margin-bottom: 1.5rem;"><i class="fas fa-building"></i> Division Performance Table</div>
+                    <div id="divisionTable" class="trend-table-container">
+                        <!-- Table populated by JS -->
+                    </div>
+                </div>
+
+                <div id="ssTrendContainer" class="subtab-pane" style="display: none;">
+                    <div class="card-title" style="margin-bottom: 1.5rem;"><i class="fas fa-charging-station"></i> Substation Performance Table</div>
+                    <div id="ssTable" class="trend-table-container">
+                        <!-- Table populated by JS -->
+                    </div>
                 </div>
             </div>
 
-
-            <!-- Score Distribution -->
-            <div class="card">
-                <div class="card-title"><i class="fas fa-chart-bar"></i> Category Averages</div>
+            <div id="barTab" class="tab-content">
+                <div class="card-title" style="margin-bottom: 1.5rem;"><i class="fas fa-chart-bar"></i> Category Average Scores</div>
                 <div class="chart-container">
                     <canvas id="barChart"></canvas>
                 </div>
@@ -284,7 +487,7 @@
         };
 
         let allData = [];
-        let trendChart, barChart;
+        let barChart;
 
         async function init() {
             await fetchData();
@@ -421,20 +624,37 @@
                 // Reset display
                 document.getElementById('avgScore').textContent = '-';
                 document.getElementById('totalInspections').textContent = '0';
+                document.getElementById('uniqueSS').textContent = '0';
                 document.getElementById('highestScore').textContent = '-';
                 document.getElementById('highestScoreLabel').textContent = '-';
                 document.getElementById('lowestScore').textContent = '-';
                 document.getElementById('lowestScoreLabel').textContent = '-';
+                document.getElementById('belowAvgSS').textContent = '0';
                 document.getElementById('scoreTrend').innerHTML = '';
-                if (trendChart) trendChart.destroy();
                 if (barChart) barChart.destroy();
                 return;
             };
 
             // Stats
             const scores = filteredData.map(d => parseInt(d['Total Score']) || 0);
-            const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
-            document.getElementById('avgScore').textContent = avg;
+            const overallAvg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            
+            document.getElementById('totalInspections').textContent = filteredData.length;
+            document.getElementById('avgScore').textContent = overallAvg.toFixed(1);
+
+            // Unique SS count
+            const uniqueSSNames = [...new Set(filteredData.map(d => d.Substation))];
+            document.getElementById('uniqueSS').textContent = uniqueSSNames.length;
+
+            // Below Average SS Count
+            // Calculate avg for each substation and compare to overallAvg
+            let belowAvgCount = 0;
+            uniqueSSNames.forEach(name => {
+                const ssScores = filteredData.filter(d => d.Substation === name).map(d => parseInt(d['Total Score']) || 0);
+                const ssAvg = ssScores.reduce((a, b) => a + b, 0) / ssScores.length;
+                if (ssAvg < overallAvg) belowAvgCount++;
+            });
+            document.getElementById('belowAvgSS').textContent = belowAvgCount;
 
             // Trend indicator
             const trendEl = document.getElementById('scoreTrend');
@@ -466,61 +686,153 @@
             document.getElementById('lowestScore').textContent = minScore;
             document.getElementById('lowestScoreLabel').textContent = `${minRow.Substation} (${minRow.Date})`;
 
-            renderTrendChart(filteredData);
             renderBarChart(filteredData);
+            renderTrendTables(filteredData);
         }
 
-        function renderTrendChart(data) {
-            const ctx = document.getElementById('trendChart').getContext('2d');
-            if (trendChart) trendChart.destroy();
-
-            // If too much data, we group by date or just show a subset
-            const labels = data.map(d => d.Date);
-            const values = data.map(d => parseInt(d['Total Score']) || 0);
-
-            trendChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Total Score',
-                        data: values,
-                        borderColor: '#0ea5e9',
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#0ea5e9',
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => {
-                                    const d = data[context.dataIndex];
-                                    return `${d.Substation}: ${context.raw} / 150 pts`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            suggestedMax: 150,
-                            grid: { color: '#f1f5f9' },
-                            title: { display: true, text: 'Points (out of 150)', font: { size: 10 } }
-                        },
-                        x: { grid: { display: false } }
-                    }
-                }
+        function renderTrendTables(data) {
+            // Division Aggregation
+            const divMap = {};
+            data.forEach(d => {
+                const div = d.Division || 'Other';
+                if (!divMap[div]) divMap[div] = { scores: [], count: 0 };
+                divMap[div].scores.push(parseInt(d['Total Score']) || 0);
+                divMap[div].count++;
             });
+
+            const divResults = Object.entries(divMap).map(([name, stats]) => ({
+                name,
+                avg: stats.scores.reduce((a, b) => a + b, 0) / stats.count,
+                count: stats.count
+            })).sort((a, b) => b.avg - a.avg);
+
+            // SS Aggregation
+            const ssMap = {};
+            data.forEach(d => {
+                const ss = d.Substation;
+                if (!ssMap[ss]) ssMap[ss] = { scores: [], count: 0, division: d.Division };
+                ssMap[ss].scores.push(parseInt(d['Total Score']) || 0);
+                ssMap[ss].count++;
+            });
+
+            const ssResults = Object.entries(ssMap).map(([name, stats]) => ({
+                name,
+                avg: stats.scores.reduce((a, b) => a + b, 0) / stats.count,
+                count: stats.count,
+                division: stats.division
+            })).sort((a, b) => b.avg - a.avg);
+
+            const scores_flat = data.map(d => parseInt(d['Total Score']) || 0);
+            const overallAvg = scores_flat.reduce((a, b) => a + b, 0) / (scores_flat.length || 1);
+
+            const maxAvg = divResults.length > 0 ? divResults[0].avg : 0;
+            const minAvg = divResults.length > 0 ? divResults[divResults.length - 1].avg : 0;
+
+            // Render Division Table
+            let divHtml = `
+                <table class="trend-table">
+                    <thead>
+                        <tr>
+                            <th>Division</th>
+                            <th>Avg Score</th>
+                            <th>Inspections</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            divResults.forEach(r => {
+                let status = 'Below average';
+                let pillClass = 'score-mid';
+
+                if (r.avg === maxAvg && r.avg > 0) {
+                    status = 'Best';
+                    pillClass = 'score-high';
+                } else if (r.avg > overallAvg) {
+                    status = 'Good';
+                    pillClass = 'score-high';
+                } else if (r.avg === minAvg && divResults.length > 1) {
+                    status = 'Lowest';
+                    pillClass = 'score-low';
+                } else {
+                    pillClass = 'score-mid';
+                }
+
+                divHtml += `
+                    <tr>
+                        <td><strong>${r.name}</strong></td>
+                        <td><span class="score-pill ${pillClass}">${r.avg.toFixed(1)}</span></td>
+                        <td>${r.count}</td>
+                        <td style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">${status}</td>
+                    </tr>
+                `;
+            });
+            divHtml += '</tbody></table>';
+            document.getElementById('divisionTable').innerHTML = divHtml;
+
+            const maxAvgSS = ssResults.length > 0 ? ssResults[0].avg : 0;
+            const minAvgSS = ssResults.length > 0 ? ssResults[ssResults.length - 1].avg : 0;
+
+            // Render SS Table
+            let ssHtml = `
+                <table class="trend-table">
+                    <thead>
+                        <tr>
+                            <th>Substation</th>
+                            <th>Division</th>
+                            <th>Avg Score</th>
+                            <th>Inspections</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            ssResults.forEach(r => {
+                let status = 'Below average';
+                let pillClass = 'score-mid';
+
+                if (r.avg === maxAvgSS && r.avg > 0) {
+                    status = 'Best';
+                    pillClass = 'score-high';
+                } else if (r.avg > overallAvg) {
+                    status = 'Good';
+                    pillClass = 'score-high';
+                } else if (r.avg === minAvgSS && ssResults.length > 1) {
+                    status = 'Lowest';
+                    pillClass = 'score-low';
+                } else {
+                    pillClass = 'score-mid';
+                }
+
+                ssHtml += `
+                    <tr>
+                        <td><strong>${r.name}</strong></td>
+                        <td>${r.division}</td>
+                        <td><span class="score-pill ${pillClass}">${r.avg.toFixed(1)}</span></td>
+                        <td>${r.count}</td>
+                        <td style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">${status}</td>
+                    </tr>
+                `;
+            });
+            ssHtml += '</tbody></table>';
+            document.getElementById('ssTable').innerHTML = ssHtml;
+        }
+
+        function switchSubTab(event, containerId) {
+            // Update buttons
+            const parent = event.currentTarget.parentElement;
+            parent.querySelectorAll('.subtab-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Update panes
+            const tabContent = parent.parentElement;
+            tabContent.querySelectorAll('.subtab-pane').forEach(pane => pane.style.display = 'none');
+            document.getElementById(containerId).style.display = 'block';
+
+            // Special handling for Chart.js resize
+            if (barChart) {
+                barChart.resize();
+            }
         }
 
 
@@ -599,6 +911,23 @@
                     }
                 }]
             });
+        }
+
+        function switchTab(tabId) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Update panes
+            document.querySelectorAll('.tab-content').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            // Resize charts to fit new visibility state
+            if (barChart) barChart.resize();
         }
 
         init();

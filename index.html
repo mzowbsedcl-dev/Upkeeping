@@ -1164,7 +1164,7 @@
         <div class="actions">
             <button id="generateReportBtn" class="btn btn-success">
                 <i class="fas fa-file-alt"></i>
-                Generate Report
+                Preview Report
             </button>
             <button id="submitBtn" class="btn btn-primary">
                 <i class="fas fa-paper-plane"></i>
@@ -1346,7 +1346,9 @@
             },
             syncReport: async (report) => {
                 const cats = ['cleanliness','defective','recordKeeping','essentials','safety','aesthetics'];
-                // Upload all pending photos (base64) to Cloudinary
+                const uploadPromises = [];
+
+                // Upload pending photos concurrently
                 for (const cat of cats) {
                     if (!report[cat]) continue;
                     for (let i = 0; i < report[cat].length; i++) {
@@ -1359,21 +1361,36 @@
                                 const ssSlug = (report.ssName || 'ss').replace(/\s+/g, '_');
                                 const folder = `upkeeping/${ssSlug}/${report.date}`;
                                 const pubId = `${ssSlug}_${report.date}_${cat}_i${i}_p${p}_${report.id.slice(0,8)}`;
-                                const result = await CLOUDINARY.upload(blob, folder, pubId);
-                                // Replace base64 with CDN url (strip dataUrl to save Sheets space)
-                                item.photos[p] = { url: result.url, publicId: result.publicId };
+                                
+                                const uploadTask = CLOUDINARY.upload(blob, folder, pubId).then(result => {
+                                    photo.url = result.url;
+                                    photo.publicId = result.publicId;
+                                    delete photo.dataUrl; // Free up memory immediately
+                                });
+                                uploadPromises.push(uploadTask);
                             }
                         }
                     }
                 }
-                // Strip any remaining dataUrl before sending to Sheets
-                const cleanReport = JSON.parse(JSON.stringify(report));
+
+                // Wait for ALL photo uploads to finish simultaneously
+                if (uploadPromises.length > 0) {
+                    await Promise.all(uploadPromises);
+                }
+
+                // Strip any remaining dataUrl before sending to Sheets efficiently
+                const cleanReport = { ...report };
                 for (const cat of cats) {
                     if (!cleanReport[cat]) continue;
-                    cleanReport[cat].forEach(item => {
-                        if (item.photos) item.photos = item.photos.map(p => ({ url: p.url, publicId: p.publicId }));
+                    cleanReport[cat] = cleanReport[cat].map(item => {
+                        if (!item.photos) return item;
+                        return {
+                            ...item,
+                            photos: item.photos.map(p => ({ url: p.url, publicId: p.publicId }))
+                        };
                     });
                 }
+
                 // Submit to Google Sheets
                 await fetch('https://script.google.com/macros/s/AKfycbx_nND_ePwV8S6Ol2mgkGUpAhfZWiI2lr6_rB9_P_dLiuep--b6EjuQ_-wjVMAnOSaO/exec', {
                     method: 'POST',
@@ -2466,18 +2483,24 @@
                     SyncEngine.updateBadge();
                     App.closeAlertModal();
 
+                    // Reset form immediately so user can continue working
+                    FormComponent.reset();
+                    const resetItems = (items) => items.forEach(i => { i.score = null; i.remarks = ''; i.photos = []; });
+                    resetItems(App.cleanlinessItems);
+                    resetItems(App.defectiveItems);
+                    resetItems(App.recordKeepingItems);
+                    resetItems(App.essentialsItems);
+                    resetItems(App.safetyItems);
+                    resetItems(App.aestheticsItems);
+                    App.updateProgress();
+                    App.renderScoreCards();
+
+                    App.showAlert('✅', 'Report queued! Syncing safely in background...', null, { hideCancel: true });
+                    setTimeout(() => App.closeAlertModal(), 2000);
+
+                    // Trigger sync in background without waiting
                     if (navigator.onLine) {
-                        App.showAlert('⏳', 'Syncing to server...', null, { showLoader: true });
-                        try {
-                            await SyncEngine.sync();
-                            App.closeAlertModal();
-                            App.showAlert('✅', 'Report submitted successfully!', null, { hideCancel: true });
-                        } catch (err) {
-                            App.closeAlertModal();
-                            App.showAlert('📦', 'Report saved locally.\nNetwork issue during sync — will retry automatically when online.', null, { hideCancel: true });
-                        }
-                    } else {
-                        App.showAlert('📦', 'No network detected.\nReport saved locally and will sync automatically when you are back online.', null, { hideCancel: true });
+                        SyncEngine.sync().catch(console.error);
                     }
                 });
             },

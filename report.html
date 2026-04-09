@@ -84,7 +84,7 @@
 
     .section {
       margin-bottom: 20px;
-      break-inside: avoid;
+      page-break-inside: avoid;
     }
 
     .section-title {
@@ -157,7 +157,7 @@
       margin-top: 30px;
       display: flex;
       justify-content: flex-end;
-      break-inside: avoid;
+      page-break-inside: avoid;
     }
 
     .grand-total-box {
@@ -262,8 +262,10 @@
       }
 
       #pdfContent {
+        padding: 0;
         box-shadow: none;
         max-width: none;
+        border: none;
       }
 
       .no-print {
@@ -336,14 +338,7 @@
     </div>
   </div>
 
-  <div class="no-print">
-    <button onclick="exportPdfAndSave()"
-      style="padding: 12px 24px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">
-      <i class="fas fa-file-pdf"></i> Download Official PDF
-    </button>
-  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script>
     const data = JSON.parse(localStorage.getItem('scoreReport'));
@@ -466,20 +461,6 @@
       document.getElementById('grandValue').textContent = `${grandScore} / ${grandMax}`;
     }
 
-    function exportPdfAndSave() {
-      const element = document.getElementById('pdfContent');
-      const filename = `${data.ssName || 'Substation'}_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`;
-
-      const opt = {
-        margin: 0.25,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-
-      html2pdf().set(opt).from(element).save();
-    }
   </script>
 </body>
 
