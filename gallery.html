@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspection Image Gallery</title>
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0ea5e9">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --primary-light: #e0f2fe;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Loading Overlay */
+        #loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--primary-light);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .navbar-brand h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-home {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .btn-home:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Header Section */
+        .hero {
+            padding: 2.5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero h2 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.05em;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+        }
+
+        /* Filter Section */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            min-width: 180px;
+            flex: 1;
+        }
+
+        .filter-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-select, .filter-input {
+            padding: 0.625rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            font-family: inherit;
+            font-size: 0.875rem;
+            background: white;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        /* Photo Counter */
+        .stats-bar {
+            padding: 0 2rem 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat-pill {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Gallery Sections */
+        .gallery-section {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .section-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-good { background: #dcfce7; color: #166534; border-left: 4px solid var(--success); }
+        .badge-average { background: #fef3c7; color: #92400e; border-left: 4px solid var(--warning); }
+        .badge-bad { background: #fee2e2; color: #991b1b; border-left: 4px solid var(--danger); }
+
+        /* Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Card */
+        .photo-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .photo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .photo-wrapper {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #f1f5f9;
+            cursor: zoom-in;
+        }
+
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .photo-card:hover .photo-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .score-indicator {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px white;
+        }
+
+        .indicator-good { background: var(--success); }
+        .indicator-average { background: var(--warning); }
+        .indicator-bad { background: var(--danger); }
+
+        .card-content {
+            padding: 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .item-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.25;
+        }
+
+        .category-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .remarks {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-style: italic;
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid #cbd5e1;
+            margin: 0.25rem 0;
+        }
+
+        .metadata {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .meta-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .meta-value {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .officer-footer {
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .officer-footer i { color: var(--primary); }
+
+        /* Empty State */
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Lightbox */
+        #lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        #lightbox.open { display: flex; }
+
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+        }
+
+        .close-lightbox {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .close-lightbox:hover { transform: scale(1.1); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar { padding: 1rem; }
+            .hero { padding: 2rem 1rem; }
+            .filters { padding: 0 1rem 1.5rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .stats-bar { padding: 0 1rem 1.5rem; overflow-x: auto; flex-wrap: nowrap; }
+            .stat-pill { white-space: nowrap; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loader -->
+    <div id="loader-overlay">
+        <div class="spinner"></div>
+        <p style="font-weight: 600; color: var(--text-muted);">Syncing image archive...</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <span style="font-size: 1.5rem;">⚡</span>
+            <h1>Inspection Gallery</h1>
+        </a>
+        <div class="nav-actions">
+            <a href="view_report.html" class="btn btn-home">
+                <i class="fas fa-list-ul"></i> Reports
+            </a>
+            <a href="index.html" class="btn btn-home">
+                <i class="fas fa-plus"></i> New Inspection
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+        <h2>Visual Archive</h2>
+        <p>Review and analyze inspection photos grouped by performance.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+        <div class="filter-group">
+            <label class="filter-label">Search Remarks</label>
+            <input type="text" id="search-input" class="filter-input" placeholder="Keyword search...">
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Division</label>
+            <select id="division-filter" class="filter-select">
+                <option value="all">All Divisions</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Substation</label>
+            <select id="ss-filter" class="filter-select">
+                <option value="all">All Substations</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Sort Order</label>
+            <select id="sort-order" class="filter-select">
+                <option value="latest">Latest First</option>
+                <option value="oldest">Oldest First</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-pill" id="total-photos" style="color: var(--primary-dark);">
+            <i class="fas fa-images"></i> <span>0 Photos</span>
+        </div>
+        <div class="stat-pill" style="color: var(--success);">
+            <i class="fas fa-check-circle"></i> <span id="good-count">0 Good</span>
+        </div>
+        <div class="stat-pill" style="color: var(--warning);">
+            <i class="fas fa-info-circle"></i> <span id="avg-count">0 Average</span>
+        </div>
+        <div class="stat-pill" style="color: var(--danger);">
+            <i class="fas fa-exclamation-triangle"></i> <span id="bad-count">0 Bad</span>
+        </div>
+    </div>
+
+    <!-- Gallery Sections -->
+    <div id="gallery-container">
+        <!-- Bad Scores -->
+        <section class="gallery-section" id="section-bad">
+            <div class="section-header">
+                <span class="section-badge badge-bad">Action Required</span>
+                <h3 class="section-title">Critical / Poor (Bad)</h3>
+            </div>
+            <div class="gallery-grid" id="grid-bad"></div>
+        </section>
+
+        <!-- Average Scores -->
+        <section class="gallery-section" id="section-average">
+            <div class="section-header">
+                <span class="section-badge badge-average">Maintenance Needed</span>
+                <h3 class="section-title">Satisfactory (Average)</h3>
+            </div>
+            <div class="gallery-grid" id="grid-average"></div>
+        </section>
+
+        <!-- Good Scores -->
+        <section class="gallery-section" id="section-good">
+            <div class="section-header">
+                <span class="section-badge badge-good">Excellence</span>
+                <h3 class="section-title">Well Maintained (Good)</h3>
+            </div>
+            <div class="gallery-grid" id="grid-good"></div>
+        </section>
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox">
+        <span class="close-lightbox" id="close-lightbox">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" src="">
+    </div>
+
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSHoWw-c-KCfsYrkQs67uWaKdag1WXVQobLkngEK-bvbky_LMF6RWg-BwgVYA-5f3RcR4u6rQA5XWhH/pub?gid=422662764&single=true&output=csv';
+
+        const AESTHETICS_MAX_MAP = {
+            "Beds in control room": 5, "TV set in control room": 5, "Operating persons dressed properly?": 5,
+            "Switchgear / feeder / PTR name-plates quality": 7, "Helmet use in switch yard": 5,
+            "Back-side of switchgears / panels": 5, "Cable trench cover status": 5,
+            "Garden / plantation condition": 5, "Last condition monitoring issues complied with?": 10
+        };
+
+        const CATEGORY_MAP = {
+            "Cleanliness": ["Control room building - inside", "Control room building - outside", "Switchgears, panels", "Switch Yard", "Battery room", "Bathroom / toilet", "Roof & surroundings"],
+            "Defective": ["Switchgear", "Ammeter/ voltmeter in circuit", "Relays in circuit", "Indication lamp", "Annunciation (hooter)", "Cell tester", "Hydrometer", "CT / PT (33kV & 11kV)", "LA (33kV & 11kV)", "Yard-light", "Tube-lights in control room", "Fans in control room"],
+            "Records": ["Standard size SLD", "Notice board", "Duty roster", "Attendance register", "Permit-to-work book", "Shut-down / Break-down register", "Tripping register", "Log-book", "Daily test report of battery", "History Book", "Inspection Book"],
+            "Essentials": ["Table & chairs (including visitor's)", "Signboard", "Entry Restricted / প্রবেশ নিষেধ board", "Almirah", "Water purifier", "Shut-down / break-down boards", "Telephone / mobile phone", "Illumination of control room", "Torch", "Wall clock"],
+            "Safety": ["Fire extinguisher", "First-aid box with medicines", "33kV hand gloves", "11kV hand gloves", "Discharge rod", "Helmet", "High Voltage detector", "Raincoat", "Gumboot"],
+            "Aesthetics": ["Beds in control room", "TV set in control room", "Operating persons dressed properly?", "Switchgear / feeder / PTR name-plates quality", "Helmet use in switch yard", "Back-side of switchgears / panels", "Cable trench cover status", "Garden / plantation condition", "Last condition monitoring issues complied with?"]
+        };
+
+        const DIVISION_MAP = {
+            'Malda': ['Englishbazar', 'Mothabari', 'Kaliachak', 'Sujapur', 'Baishnabnagar', 'Gopalganj', 'Rabindra Bhaban', 'KPS Malda', 'Mankchak', 'Milki'],
+            'Gazole': ['Nalagola', 'Deotala', 'Narayanpur', 'Mobaeakpur', 'Habibpur', 'Balia', 'Bamongola', 'Gazole', 'Ranipur OD', 'Chandipur', 'Mangalbari'],
+            'Chanchal': ['Shibnagar', 'Ratua', 'Pukuria', 'Chanchal', 'Bhaluka', 'Ashapur', 'Chatrak', 'Harishchandrapur'],
+            'Raiganj': ['Raiganj', 'Kasba', 'Durgapur', 'Itahar', 'Bangar', 'Tungidighi', 'Bikore', 'Laxmania', 'Hemtabad', 'Malon', 'Kaliyaganj', 'Dalimgaon', 'Belua', 'Kunor', 'Spinning Mill', 'Mahespur'],
+            'Islampur': ['Sonapur', 'Bholagach', 'Chopra', 'Srikrishnapur', 'Islampur', 'Panjipara', 'Lodhan', 'Kahata', 'Kanki', 'Choprajhar', 'Sujali', 'Tajpur'],
+            'Buniadpur': ['Buniadpur', 'Harirampur', 'Kushmandi', 'Thangapara', 'Pransagar', 'Maligaon'],
+            'Balurghat': ['Baro-Raghunathpur', 'Amrail', 'Trimohini', 'Patiram', 'Mahipur', 'Rampur', 'Salas', 'Laskarhat']
+        };
+
+        let allPhotos = [];
+        let filteredPhotos = [];
+
+        async function init() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const rawData = parseCsv(csvText);
+                
+                processReports(rawData);
+                populateFilters();
+                renderGallery();
+                
+                document.getElementById('loader-overlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader-overlay').style.display = 'none', 500);
+                
+                // Set up event listeners
+                document.getElementById('search-input').addEventListener('input', applyFilters);
+                document.getElementById('division-filter').addEventListener('change', updateSubstations);
+                document.getElementById('ss-filter').addEventListener('change', applyFilters);
+                document.getElementById('sort-order').addEventListener('change', applyFilters);
+                document.getElementById('close-lightbox').addEventListener('click', closeLightbox);
+                document.getElementById('lightbox').addEventListener('click', e => {
+                    if(e.target === e.currentTarget) closeLightbox();
+                });
+            } catch (error) {
+                console.error('Failed to init gallery:', error);
+                document.getElementById('loader-overlay').innerHTML = `
+                    <div style="text-align:center; color: var(--danger);">
+                        <i class="fas fa-wifi" style="font-size:3rem; margin-bottom:1rem;"></i>
+                        <p>Failed to connect to data archive.</p>
+                        <button onclick="location.reload()" class="btn btn-home" style="margin-top:1rem;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function parseCsv(csv) {
+            const lines = csv.split(/\r?\n/).filter(line => line.trim() !== '');
+            const CSV_FIELD_REGEX = /(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|([^,]*))(?:,|$)/g;
+            const parseLine = (line) => {
+                const fields = [];
+                CSV_FIELD_REGEX.lastIndex = 0;
+                let match;
+                while ((match = CSV_FIELD_REGEX.exec(line)) !== null) {
+                    let field = match[1] !== undefined ? match[1].replace(/""/g, '"') : match[2];
+                    fields.push(field.trim());
+                    if (match.index === CSV_FIELD_REGEX.lastIndex) CSV_FIELD_REGEX.lastIndex++;
+                }
+                return fields;
+            };
+            const headers = parseLine(lines[0]);
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const row = {};
+                const fields = parseLine(lines[i]);
+                headers.forEach((h, idx) => row[h] = fields[idx] || '');
+                data.push(row);
+            }
+            return data;
+        }
+
+        function processReports(reports) {
+            allPhotos = [];
+            reports.forEach(report => {
+                // Determine Division if missing
+                if (!report.Division) {
+                    for (const [div, subs] of Object.entries(DIVISION_MAP)) {
+                        if (subs.includes(report.Substation)) {
+                            report.Division = div;
+                            break;
+                        }
+                    }
+                }
+                if (!report.Division) report.Division = 'Unknown';
+
+                // Extract photos from each category/item
+                Object.entries(CATEGORY_MAP).forEach(([catName, items]) => {
+                    items.forEach(itemName => {
+                        const photoUrlsStr = report[`${itemName} - Photos`] || '';
+                        if (photoUrlsStr) {
+                            const urls = photoUrlsStr.split(',').map(u => u.trim()).filter(Boolean);
+                            const score = Number(report[itemName]) || 0;
+                            const remarks = report[`${itemName} - Remarks`] || '';
+                            const max = AESTHETICS_MAX_MAP[itemName] || 2;
+                            
+                            urls.forEach(url => {
+                                allPhotos.push({
+                                    url,
+                                    itemName,
+                                    category: catName,
+                                    score,
+                                    max,
+                                    group: getScoreGroup(score, max),
+                                    remarks,
+                                    division: report.Division,
+                                    substation: report.Substation,
+                                    date: report.Date,
+                                    officer: report["Inspecting Officer"],
+                                    supervisor: report.Supervisor || report.supervisor
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+            filteredPhotos = [...allPhotos];
+        }
+
+        function getScoreGroup(score, max) {
+            if (score >= max) return 'good';
+            if (score <= 0) return 'bad';
+            return 'average';
+        }
+
+        function populateFilters() {
+            const divSelect = document.getElementById('division-filter');
+            const divisions = [...new Set(allPhotos.map(p => p.division))].sort();
+            divisions.forEach(div => {
+                const opt = document.createElement('option');
+                opt.value = div;
+                opt.textContent = div;
+                divSelect.appendChild(opt);
+            });
+        }
+
+        function updateSubstations() {
+            const div = document.getElementById('division-filter').value;
+            const ssSelect = document.getElementById('ss-filter');
+            ssSelect.innerHTML = '<option value="all">All Substations</option>';
+            
+            const relevantSubs = div === 'all' 
+                ? [...new Set(allPhotos.map(p => p.substation))]
+                : [...new Set(allPhotos.filter(p => p.division === div).map(p => p.substation))];
+            
+            relevantSubs.sort().forEach(ss => {
+                const opt = document.createElement('option');
+                opt.value = ss;
+                opt.textContent = ss;
+                ssSelect.appendChild(opt);
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const div = document.getElementById('division-filter').value;
+            const ss = document.getElementById('ss-filter').value;
+            const sort = document.getElementById('sort-order').value;
+
+            filteredPhotos = allPhotos.filter(p => {
+                const matchesSearch = p.remarks.toLowerCase().includes(search) || 
+                                      p.itemName.toLowerCase().includes(search);
+                const matchesDiv = div === 'all' || p.division === div;
+                const matchesSS = ss === 'all' || p.substation === ss;
+                return matchesSearch && matchesDiv && matchesSS;
+            });
+
+            if (sort === 'latest') {
+                filteredPhotos.sort((a,b) => new Date(b.date) - new Date(a.date));
+            } else {
+                filteredPhotos.sort((a,b) => new Date(a.date) - new Date(b.date));
+            }
+
+            renderGallery();
+        }
+
+        function renderGallery() {
+            const groups = { good: [], average: [], bad: [] };
+            filteredPhotos.forEach(p => groups[p.group].push(p));
+
+            // Update stats
+            document.getElementById('total-photos').querySelector('span').textContent = `${filteredPhotos.length} Photos`;
+            document.getElementById('good-count').textContent = `${groups.good.length} Good`;
+            document.getElementById('avg-count').textContent = `${groups.average.length} Average`;
+            document.getElementById('bad-count').textContent = `${groups.bad.length} Bad`;
+
+            ['good', 'average', 'bad'].forEach(group => {
+                const grid = document.getElementById(`grid-${group}`);
+                const section = document.getElementById(`section-${group}`);
+                grid.innerHTML = '';
+                
+                if (groups[group].length === 0) {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = 'block';
+                    groups[group].forEach(photo => {
+                        grid.appendChild(createCard(photo));
+                    });
+                }
+            });
+
+            if (filteredPhotos.length === 0) {
+                document.getElementById('gallery-container').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search-minus"></i>
+                        <h3>No photos found matching your criteria.</h3>
+                        <p>Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
+            } else {
+               // Ensure container has expected sections if coming from empty state
+               const container = document.getElementById('gallery-container');
+               if (!container.querySelector('section')) {
+                   location.reload(); 
+               }
+            }
+        }
+
+        function createCard(photo) {
+            const card = document.createElement('div');
+            card.className = 'photo-card';
+            
+            const dateStr = new Date(photo.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            
+            card.innerHTML = `
+                <div class="photo-wrapper" onclick="openLightbox('${photo.url}')">
+                    <img src="${photo.url}" loading="lazy" alt="${photo.itemName}">
+                    <div class="score-indicator indicator-${photo.group}"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-header">
+                        <h4 class="item-name">${photo.itemName}</h4>
+                        <span class="category-label">${photo.category}</span>
+                    </div>
+                    ${photo.remarks ? `<p class="remarks">"${photo.remarks}"</p>` : ''}
+                    <div class="metadata">
+                        <div class="meta-item">
+                            <span class="meta-label">Location</span>
+                            <span class="meta-value" title="${photo.substation}">${photo.substation}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Date</span>
+                            <span class="meta-value">${dateStr}</span>
+                        </div>
+                    </div>
+                    <div class="officer-footer">
+                        <i class="fas fa-user-check"></i>
+                        <span title="${photo.officer}">Inspected by <b>${photo.officer}</b></span>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            lb.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lb = document.getElementById('lightbox');
+            lb.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        init();
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.error('SW failed', err));
+            });
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+            });
+        }
+    </script>
+</body>
+
+</html>

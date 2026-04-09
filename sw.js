@@ -1,8 +1,9 @@
-const CACHE_NAME = 'upkeeping-v2';
+const CACHE_NAME = 'upkeeping-v3';
 const ASSETS = [
     './',
     'index.html',
     'analytics.html',
+    'gallery.html',
     'report.html',
     'report1.html',
     'view_report.html',
@@ -22,6 +23,7 @@ self.addEventListener('install', (event) => {
             return cache.addAll(ASSETS);
         })
     );
+    self.skipWaiting(); // Force the waiting service worker to become the active service worker
 });
 
 // Activate Event
@@ -31,6 +33,8 @@ self.addEventListener('activate', (event) => {
             return Promise.all(
                 keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
             );
+        }).then(() => {
+            return self.clients.claim(); // Take control of all open pages immediately
         })
     );
 });

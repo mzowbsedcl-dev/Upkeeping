@@ -902,12 +902,17 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .item-extras-toggle:hover { background: var(--primary-100); }
+
+        .item-extras-toggle:hover {
+            background: var(--primary-100);
+        }
+
         .item-extras-toggle.has-data {
             color: var(--green-600);
             background: var(--green-50);
-            border-color: rgba(34,197,94,0.2);
+            border-color: rgba(34, 197, 94, 0.2);
         }
+
         .item-extras {
             display: none;
             flex-direction: column;
@@ -918,7 +923,11 @@
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
         }
-        .item-extras.open { display: flex; }
+
+        .item-extras.open {
+            display: flex;
+        }
+
         .remarks-textarea {
             width: 100%;
             padding: 0.5rem 0.75rem;
@@ -932,17 +941,20 @@
             background: var(--bg-secondary);
             transition: border-color 0.2s;
         }
+
         .remarks-textarea:focus {
             outline: none;
             border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
         }
+
         .photo-upload-area {
             display: flex;
             gap: 0.5rem;
             align-items: center;
             flex-wrap: wrap;
         }
+
         .photo-slot {
             position: relative;
             width: 76px;
@@ -957,11 +969,16 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
-        .photo-slot.add-slot { cursor: pointer; }
+
+        .photo-slot.add-slot {
+            cursor: pointer;
+        }
+
         .photo-slot.add-slot:hover {
             border-color: var(--primary-500);
             background: var(--primary-50);
         }
+
         .photo-slot.add-slot input[type="file"] {
             position: absolute;
             inset: 0;
@@ -970,27 +987,40 @@
             width: 100%;
             height: 100%;
         }
-        .photo-slot-icon { font-size: 1.4rem; pointer-events: none; }
-        .photo-slot-label { font-size: 0.6rem; font-weight: 600; color: var(--text-secondary); margin-top: 2px; }
-        .photo-slot.add-slot { 
+
+        .photo-slot-icon {
+            font-size: 1.4rem;
+            pointer-events: none;
+        }
+
+        .photo-slot-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .photo-slot.add-slot {
             flex-direction: column;
             gap: 2px;
             border-style: solid;
             background: var(--neutral-50);
         }
+
         .photo-slot img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             cursor: zoom-in;
         }
+
         .photo-remove-btn {
             position: absolute;
             top: 2px;
             right: 2px;
             width: 20px;
             height: 20px;
-            background: rgba(0,0,0,0.55);
+            background: rgba(0, 0, 0, 0.55);
             color: white;
             border: none;
             border-radius: 50%;
@@ -1004,7 +1034,11 @@
             padding: 0;
             transition: background 0.15s;
         }
-        .photo-remove-btn:hover { background: rgba(239,68,68,0.85); }
+
+        .photo-remove-btn:hover {
+            background: rgba(239, 68, 68, 0.85);
+        }
+
         .photo-count-hint {
             font-size: 0.7rem;
             color: var(--text-muted);
@@ -1016,7 +1050,7 @@
         .lightbox-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 3000;
             display: flex;
             align-items: center;
@@ -1026,21 +1060,27 @@
             visibility: hidden;
             transition: all 0.25s ease;
         }
-        .lightbox-overlay.show { opacity: 1; visibility: visible; }
+
+        .lightbox-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
         .lightbox-img {
             max-width: 92vw;
             max-height: 88vh;
             border-radius: var(--radius-lg);
             object-fit: contain;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
         }
+
         .lightbox-close {
             position: fixed;
             top: 1rem;
             right: 1rem;
             width: 2.5rem;
             height: 2.5rem;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             border-radius: 50%;
             color: white;
@@ -1052,29 +1092,36 @@
             backdrop-filter: blur(4px);
             transition: background 0.2s;
         }
-        .lightbox-close:hover { background: rgba(255,255,255,0.3); }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
 
         /* ── Mobile Responsive Overrides ── */
         @media (max-width: 768px) {
             .header {
                 padding: var(--space-3);
             }
+
             .header-content {
                 flex-direction: column;
                 gap: 10px;
                 align-items: stretch;
             }
+
             .header h1 {
                 font-size: 0.95rem;
                 justify-content: center;
                 text-align: center;
             }
-            .header-content > div {
+
+            .header-content>div {
                 justify-content: center;
                 flex-wrap: nowrap;
                 width: 100%;
                 gap: var(--space-1) !important;
             }
+
             .header .btn-reset {
                 padding: 0.4rem var(--space-2);
                 font-size: 0.7rem;
@@ -1083,31 +1130,39 @@
                 min-width: 0;
                 white-space: nowrap;
             }
+
             .container {
-                padding-top: 170px; 
+                padding-top: 170px;
             }
+
             .score-cards-grid {
                 grid-template-columns: 1fr;
             }
+
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
             .score-buttons {
                 grid-template-columns: repeat(3, 1fr);
             }
+
             .score-btn {
                 padding: var(--space-2) var(--space-1);
                 font-size: 0.65rem;
             }
+
             .modal-content {
                 max-width: 95vw;
                 margin: 0 auto;
                 max-height: 95vh;
             }
+
             .modal-body {
                 padding: var(--space-4);
                 max-height: 65vh;
             }
+
             .photo-grid {
                 grid-template-columns: 1fr 1fr;
             }
@@ -1133,10 +1188,22 @@
                         <i class="fas fa-chart-line"></i>
                         Trend
                     </a>
+                    <!-- Gallery Button -->
+                    <a href="gallery.html" class="btn btn-reset"
+                        style="text-decoration: none; display: flex; align-items: center; gap: 0.3rem; background: var(--amber-500); color: white; border-color: var(--amber-600);">
+                        <i class="fas fa-images"></i>
+                        Gallery
+                    </a>
                     <!-- New Reset Button -->
                     <button id="resetBtn" class="btn btn-reset">
                         <i class="fas fa-redo"></i>
                         Reset
+                    </button>
+                    <!-- Force Update Button -->
+                    <button id="hardRefreshBtn" class="btn btn-reset" 
+                        style="background: var(--red-500); color: white; border-color: var(--red-600);">
+                        <i class="fas fa-sync-alt"></i>
+                        Update
                     </button>
                     <!-- View Reports Button -->
                     <div style="position: relative; display: inline-flex;">
@@ -1145,7 +1212,8 @@
                             <i class="fas fa-list"></i>
                             Report
                         </a>
-                        <span id="pendingBadge" title="Pending sync" style="display:none; position:absolute; top:-7px; right:-7px; background:var(--red-500); color:white; border-radius:50%; min-width:18px; height:18px; font:700 10px/18px 'Inter',sans-serif; text-align:center; padding:0 3px; z-index:10;">0</span>
+                        <span id="pendingBadge" title="Pending sync"
+                            style="display:none; position:absolute; top:-7px; right:-7px; background:var(--red-500); color:white; border-radius:50%; min-width:18px; height:18px; font:700 10px/18px 'Inter',sans-serif; text-align:center; padding:0 3px; z-index:10;">0</span>
                     </div>
                 </div>
             </div>
@@ -1345,7 +1413,7 @@
                 badge.style.display = n > 0 ? 'inline-block' : 'none';
             },
             syncReport: async (report) => {
-                const cats = ['cleanliness','defective','recordKeeping','essentials','safety','aesthetics'];
+                const cats = ['cleanliness', 'defective', 'recordKeeping', 'essentials', 'safety', 'aesthetics'];
                 const uploadPromises = [];
 
                 // Upload pending photos concurrently
@@ -1360,8 +1428,8 @@
                                 const blob = SyncEngine.dataUrlToBlob(photo.dataUrl);
                                 const ssSlug = (report.ssName || 'ss').replace(/\s+/g, '_');
                                 const folder = `upkeeping/${ssSlug}/${report.date}`;
-                                const pubId = `${ssSlug}_${report.date}_${cat}_i${i}_p${p}_${report.id.slice(0,8)}`;
-                                
+                                const pubId = `${ssSlug}_${report.date}_${cat}_i${i}_p${p}_${report.id.slice(0, 8)}`;
+
                                 const uploadTask = CLOUDINARY.upload(blob, folder, pubId).then(result => {
                                     photo.url = result.url;
                                     photo.publicId = result.publicId;
@@ -1474,13 +1542,15 @@
             },
 
             data: {
-                supervisors: [
-                    "Ahsan Sahana",
-                    "Supratim Mitra",
-                    "Sourav Biswas",
-                    "Baban Mondal",
-                    "T. Dutta"
-                ],
+                supervisors: {
+                    "Malda": ["Md Ashique Iqbal, DE(Tech)", "Bikramjit Saha, AE(Tech)"],
+                    "Gazole": ["Raja Das, AE(Tech)", "Soumen Mondal, AE(Tech)"],
+                    "Chanchal": ["Mobosser Alam, DE(Tech)", "Suman Sardar, AE(Tech)"],
+                    "Raiganj": ["Dilip Kumar, AE(Tech)", "Aditya Sureka, AE(TEch)"],
+                    "Islampur": ["Md Mannan, DE(Tech)", "Abdul Hamid Khan, AE(Tech)"],
+                    "Buniadpur": ["Sourav Singha, AE(Tech)", "Pronoy Haldar, DE(Tech)"],
+                    "Balurghat": ["Supratim Mitra, AE(Tech)", "Ahsan Sahana, AE(Tech)"]
+                },
                 cleanlinessItems: [
                     { name: 'Control room building - inside', maxPoints: 2 },
                     { name: 'Control room building - outside', maxPoints: 2 },
@@ -1618,7 +1688,7 @@
                     'Raiganj': ['Raiganj', 'Kasba', 'Durgapur', 'Itahar', 'Bangar', 'Tungidighi', 'Bikore', 'Laxmania', 'Hemtabad', 'Malon', 'Kaliyaganj', 'Dalimgaon', 'Belua', 'Kunor', 'Spinning Mill', 'Mahespur'],
                     'Islampur': ['Sonapur', 'Bholagach', 'Chopra', 'Srikrishnapur', 'Islampur', 'Panjipara', 'Lodhan', 'Kahata', 'Kanki', 'Choprajhar', 'Sujali', 'Tajpur'],
                     'Buniadpur': ['Buniadpur', 'Harirampur', 'Kushmandi', 'Thangapara', 'Pransagar', 'Maligaon'],
-                    'Balurghat': ['Baro-Raghunathpur', 'Amrail', 'Trimohini', 'Patiram', 'Mahipur', 'Rampur', 'Salas']
+                    'Balurghat': ['Baro-Raghunathpur', 'Amrail', 'Trimohini', 'Patiram', 'Mahipur', 'Rampur', 'Salas', 'Laskarhat']
                 }
             }
         };
@@ -1722,10 +1792,10 @@
                             <div class="form-group">
                                 <input type="date" class="form-control" id="visitDate" placeholder="Visit Date">
                             </div>
-                            <div class="form-group">
+                             <div class="form-group">
                                 <input type="text" class="form-control" id="supervisor" placeholder="Supervising DE/AE" list="supervisorList">
                                 <datalist id="supervisorList">
-                                    ${CONFIG.data.supervisors.map(name => `<option value="${name}">`).join('')}
+                                    <!-- Populated dynamically based on division -->
                                 </datalist>
                             </div>
                             <div class="form-group">
@@ -1741,15 +1811,28 @@
             updateSubstations: () => {
                 const divisionSelect = document.getElementById('division');
                 const ssSelect = document.getElementById('ssName');
+                const supervisorList = document.getElementById('supervisorList');
                 const selectedDivision = divisionSelect.value;
 
                 ssSelect.innerHTML = '<option value="">Select Substation</option>';
+                supervisorList.innerHTML = ''; // Clear supervisors
 
-                if (selectedDivision && CONFIG.data.substations[selectedDivision]) {
-                    CONFIG.data.substations[selectedDivision].forEach(ss => {
-                        const option = Utils.createElement('option', { value: ss }, ss);
-                        ssSelect.appendChild(option);
-                    });
+                if (selectedDivision) {
+                    // Update Substations
+                    if (CONFIG.data.substations[selectedDivision]) {
+                        CONFIG.data.substations[selectedDivision].forEach(ss => {
+                            const option = Utils.createElement('option', { value: ss }, ss);
+                            ssSelect.appendChild(option);
+                        });
+                    }
+
+                    // Update Supervisors
+                    if (CONFIG.data.supervisors[selectedDivision]) {
+                        CONFIG.data.supervisors[selectedDivision].forEach(name => {
+                            const option = Utils.createElement('option', { value: name });
+                            supervisorList.appendChild(option);
+                        });
+                    }
                 }
             },
             reset: () => { // New reset function for the form
@@ -1757,6 +1840,10 @@
                 const ssSelect = document.getElementById('ssName');
                 ssSelect.innerHTML = '<option value="">Select Substation</option>';
                 ssSelect.value = ''; // Ensure the value is also reset
+                
+                const supervisorList = document.getElementById('supervisorList');
+                if (supervisorList) supervisorList.innerHTML = '';
+                
                 document.getElementById('visitDate').value = '';
                 document.getElementById('supervisor').value = '';
                 document.getElementById('inspectingOfficer').value = '';
@@ -1884,7 +1971,7 @@
 
                     const updateToggle = () => {
                         const has = App[`${type}Items`][index].remarks ||
-                                    (App[`${type}Items`][index].photos && App[`${type}Items`][index].photos.length > 0);
+                            (App[`${type}Items`][index].photos && App[`${type}Items`][index].photos.length > 0);
                         if (has) {
                             extrasToggle.innerHTML = '✅ Note / photos saved';
                             extrasToggle.classList.add('has-data');
@@ -1936,7 +2023,7 @@
                                 <div class="photo-slot-label">Gallery</div>
                                 <input type="file" accept="image/*">
                             `;
-                            
+
                             // --- CAMERA BUTTON ---
                             const cameraSlot = document.createElement('div');
                             cameraSlot.className = 'photo-slot add-slot';
@@ -1969,10 +2056,10 @@
                                 e.target.value = '';
                             };
 
-                            gallerySlot.querySelector('input').addEventListener('change', e => 
+                            gallerySlot.querySelector('input').addEventListener('change', e =>
                                 handlePhotoInput(e, gallerySlot.querySelector('.photo-slot-icon'))
                             );
-                            cameraSlot.querySelector('input').addEventListener('change', e => 
+                            cameraSlot.querySelector('input').addEventListener('change', e =>
                                 handlePhotoInput(e, cameraSlot.querySelector('.photo-slot-icon'))
                             );
 
@@ -2022,6 +2109,9 @@
                 // Initialize components
                 ProgressComponent.init('progressContainer');
                 FormComponent.init('formContainer');
+
+                // Hard Refresh Listener
+                document.getElementById('hardRefreshBtn').addEventListener('click', App.forceUpdate);
 
                 // STEP 1: Initialize data arrays first
                 App.initializeData();
@@ -2181,7 +2271,7 @@
 
             handleModalDoneClick: () => {
                 if (!App.currentModalType) return App.closeItemModal();
-                
+
                 const itemsArray = App[`${App.currentModalType}Items`];
                 if (!itemsArray) return App.closeItemModal();
 
@@ -2189,25 +2279,25 @@
                 if (firstUnfilledIndex !== -1) {
                     const listContainer = document.getElementById('modalItemList');
                     const itemElements = listContainer.querySelectorAll('.score-item');
-                    
+
                     if (itemElements[firstUnfilledIndex]) {
                         const el = itemElements[firstUnfilledIndex];
                         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        
+
                         // Briefly highlight the missing item
                         el.style.transition = 'all 0.3s ease';
                         el.style.transform = 'scale(1.02)';
                         el.style.boxShadow = '0 0 0 2px var(--amber-500)';
-                        
+
                         setTimeout(() => {
                             el.style.transform = '';
                             el.style.boxShadow = '';
                         }, 600);
-                        
+
                         return; // Prevent closing the modal
                     }
                 }
-                
+
                 // If everything is filled, let it close
                 App.closeItemModal();
             },
@@ -2573,6 +2663,11 @@
                 navigator.serviceWorker.register('sw.js')
                     .then(reg => console.log('Service Worker registered', reg))
                     .catch(err => console.error('Service Worker registration failed', err));
+            });
+
+            // Reload the page when a new service worker takes over
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
             });
         }
     </script>
